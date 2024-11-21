@@ -7,6 +7,6 @@ def ns_to_duration_str(ns: int) -> str:
 
 def run(name: str, implementation: Callable[[str], int]) -> None:
     t_start = time.time_ns()
-    solution = implementation('input.txt')
+    solution = implementation(f'{name[:-2]}/input.txt')
     t_elapsed = time.time_ns() - t_start
     print(f'Solution to {name} (Computed in {ns_to_duration_str(t_elapsed)}): {solution}')
