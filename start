@@ -39,4 +39,6 @@ session_cookie=$(<.aoc.cookie)
 input=$(curl -s --cookie "session=${session_cookie}" https://adventofcode.com/${year}/day/${day_no_leading_zero}/input)
 echo -n "$input" >> "${year_day}/input.txt"
 
+open "https://adventofcode.com/${year}/day/${day_no_leading_zero}"
+
 echo "Created solution files for for ${year_day}"
