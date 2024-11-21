@@ -1,0 +1,42 @@
+#!/bin/bash
+
+set -e
+
+# Check if exactly two arguments are passed
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <year YYYY> <day DD>"
+    exit 1
+fi
+
+# Assign arguments to variables
+year=$1
+day=$2
+# Add leading zero to day if it's a single digit
+day=$(printf "%02d" "$day")
+day_no_leading_zero=${day#0}
+
+year_day="${year}_${day}"
+
+if [ -d "${year_day}" ]; then
+    echo "Error: Folder '${year_day}' already exists."
+    exit 1
+fi
+
+# Copy the 'template' folder and rename it to YYYY_DD
+cp -r template "${year_day}"
+
+# Check if the file "YYYY_DD.py" exists in the template folder
+file="${year_day}/${year_day}.py"
+# Rename the file to include the passed year and date
+mv "${year_day}/YYYY_DD.py" "$file"
+
+# Replace all instances of "YYYY_DD" in the file with the passed year and date
+sed -i '' "s/YYYY_DD/${year_day}/g" "$file"
+
+# Read the advent of code cookie
+session_cookie=$(<.aoc.cookie)
+# Populate the input.txt
+input=$(curl -s --cookie "session=${session_cookie}" https://adventofcode.com/${year}/day/${day_no_leading_zero}/input)
+echo -n "$input" >> "${year_day}/input.txt"
+
+echo "Created solution files for for ${year_day}"
