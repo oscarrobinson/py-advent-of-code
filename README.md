@@ -28,3 +28,11 @@ Once you think you have a working solution, run to get the final result:
 ./run 2023 2
 ```
 
+## Common code
+
+Common code can go in modules in the common directory.
+
+Run any tests using
+```shell
+uv run pytest common
+```
