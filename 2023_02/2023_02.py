@@ -29,6 +29,22 @@ class Game:
                 return False
         return True
 
+    def min_required_cubes(self):
+        r = 0
+        b = 0
+        g = 0
+
+        for game_set in self.sets:
+            r = max([r, game_set.r])
+            g = max([g, game_set.g])
+            b = max([b, game_set.b])
+
+        return {'r': r, 'g': g, 'b': b}
+
+    def min_required_cubes_powerset(self) -> int:
+        mins = self.min_required_cubes()
+        return mins['r'] * mins['g'] * mins['b']
+
 def get_games(filename: str) -> list[Game]:
      with open(filename) as input:
         return [Game(line) for line in input]
@@ -42,7 +58,15 @@ def solution_2023_02_A(filename: str) -> int:
     return result
 
 def solution_2023_02_B(filename: str) -> int:
-    return 0
+    games = get_games(filename)
+    result = 0
+    for game in games:
+        result += game.min_required_cubes_powerset()
+    return result
+
+def test_min_required_cubes():
+    assert Game('Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green').min_required_cubes() == {'r': 4, 'g': 2, 'b': 6}
+    assert Game('Game 7: 3 green, 2 blue; 1 green, 1 blue').min_required_cubes() == {'r': 0, 'b': 2, 'g': 3}
 
 def test_game_is_possible():
     assert Game('Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red').possible(r=12, g=13, b=14) == False
@@ -64,10 +88,10 @@ def test_final_solution_2023_02_A():
     assert solution_2023_02_A('./2023_02/input.txt') == 2600
 
 def test_solution_2023_02_B():
-    assert solution_2023_02_B('test_input.txt') == 0 # Replace with expected output for the test case
+    assert solution_2023_02_B('./2023_02/test_input.txt') == 2286 # Replace with expected output for the test case
 
-#def test_final_solution_2023_02_B():
-#    assert solution_2023_02_B('./2023_02/input.txt') == 0
+def test_final_solution_2023_02_B():
+    assert solution_2023_02_B('./2023_02/input.txt') == 86036
 
 if __name__ == '__main__':
     run('2023_02_A', solution_2023_02_A)
