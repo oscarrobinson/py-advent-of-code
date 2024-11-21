@@ -2,8 +2,9 @@
 
 Repo for Python solutions for Advent of Code past and present
 
-
 ## Setup
+
+Ensure you have [uv](https://docs.astral.sh/uv/getting-started/installation/) installed.
 
 The start.sh script builds files for a day. It fetches the input from the AoC site. You'll need to add your session cookie to a file in the root directory named `.aoc.cookie`.
 
