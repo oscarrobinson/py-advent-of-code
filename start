@@ -37,6 +37,7 @@ sed -i '' "s/YYYY_DD/${year_day}/g" "$file"
 session_cookie=$(<.aoc.cookie)
 # Populate the input.txt
 input=$(curl -s --cookie "session=${session_cookie}" https://adventofcode.com/${year}/day/${day_no_leading_zero}/input)
+mv "${year_day}/_input.txt" "${year_day}/input.txt"
 echo -n "$input" >> "${year_day}/input.txt"
 
 open "https://adventofcode.com/${year}/day/${day_no_leading_zero}"

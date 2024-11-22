@@ -28,6 +28,15 @@ Once you think you have a working solution, run to get the final result:
 ./run 2023 2
 ```
 
+## Inputs
+
+The AoC creators asked that people do not host their inputs in public places. This is to prevent reverse engineering of the input generation logic.
+
+Therefore, `input.txt` files are not committed to GitHub.
+
+If you have pulled the repo and want to restore the `input.txt` files, run the `./repopulate_input` script.
+
+
 ## Common code
 
 Common code can go in modules in the common directory.
