@@ -15,4 +15,7 @@ day=$2
 day=$(printf "%02d" "$day")
 year_day="${year}_${day}"
 
-uv run -m "${year_day}.${year_day}"
+# Run each part separately so we do each from cold start
+# That way we get a more accurate timing measurement
+uv run -m "${year_day}.${year_day}" A
+uv run -m "${year_day}.${year_day}" B

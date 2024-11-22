@@ -1,4 +1,5 @@
 import re
+import sys
 from common.utils import run
 
 
@@ -113,5 +114,4 @@ def test_final_solution_2023_02_B():
 
 
 if __name__ == "__main__":
-    run("2023_02_A", solution_2023_02_A)
-    run("2023_02_B", solution_2023_02_B)
+    run("2023_02", sys.argv[1], solution_2023_02_A, solution_2023_02_B)
