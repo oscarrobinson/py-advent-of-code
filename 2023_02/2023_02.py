@@ -79,9 +79,9 @@ def test_min_required_cubes():
 
 def test_game_is_possible():
     assert (
-        Game("Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red").possible(r=12, g=13, b=14)
+        Game("Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red").possible(r=12, g=13, b=14)  # noqa: E712
         == False
-    )  # noqa: E712
+    )
     assert Game("Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green").possible(r=12, g=13, b=14) == True  # noqa: E712
 
 
