@@ -8,7 +8,9 @@ def ns_to_duration_str(ns: int) -> str:
     return f"{seconds:.6f}s"
 
 
-def run(name: str, problem: Optional[str], implementation_a: Callable[[str], int], implementation_b: Callable[[str], int]) -> None:
+def run(
+    name: str, problem: Optional[str], implementation_a: Callable[[str], int], implementation_b: Callable[[str], int]
+) -> None:
     if problem == "A":
         implementation = implementation_a
     elif problem == "B":
