@@ -2,6 +2,7 @@ import sys
 import re
 from common.utils import run
 from common.grid import grid_from_lines
+from common.grid import Point, Grid
 
 
 def solution_2024_04_A(filename: str) -> int:
@@ -19,8 +20,29 @@ def solution_2024_04_A(filename: str) -> int:
         return occurences + rev_occurences
 
 
+def has_x_mas_centered_on(wordsearch: Grid, point: Point) -> bool:
+    c = wordsearch.val(point)
+    tl = wordsearch.val(Point(point.x - 1, point.y - 1))
+    tr = wordsearch.val(Point(point.x + 1, point.y - 1))
+    bl = wordsearch.val(Point(point.x - 1, point.y + 1))
+    br = wordsearch.val(Point(point.x + 1, point.y + 1))
+
+    if c == "A":
+        if (tl == "M" and br == "S") or (tl == "S" and br == "M"):
+            if (tr == "M" and bl == "S") or (tr == "S" and bl == "M"):
+                return True
+    return False
+
+
 def solution_2024_04_B(filename: str) -> int:
-    return 0
+    with open(filename) as lines:
+        wordsearch = grid_from_lines(list(lines))
+        total = 0
+        for x in range(0, wordsearch.width()):
+            for y in range(0, wordsearch.height()):
+                if has_x_mas_centered_on(wordsearch, Point(x, y)):
+                    total += 1
+        return total
 
 
 def test_solution_2024_04_A():
@@ -32,7 +54,7 @@ def test_final_solution_2024_04_A():
 
 
 def test_solution_2024_04_B():
-    assert solution_2024_04_B("./2024_04/test_input.txt") == 0  # Replace with expected output for the test case
+    assert solution_2024_04_B("./2024_04/test_input.txt") == 9  # Replace with expected output for the test case
 
 
 # def test_final_solution_2024_04_B():

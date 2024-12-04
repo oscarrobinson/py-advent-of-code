@@ -34,6 +34,12 @@ class Grid:
     def height(self):
         return len(self.vals)
 
+    def val(self, point: Point) -> str:
+        if point.x >= 0 and point.x < self.width() and point.y >= 0 and point.y < self.height():
+            return self.vals[point.y][point.x]
+        else:
+            return "OUT_OF_BOUNDS"
+
     def val_rows(self) -> list[list[str]]:
         return list([list(row) for row in self.vals])
 

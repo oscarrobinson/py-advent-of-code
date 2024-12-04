@@ -44,3 +44,10 @@ def test_grid_val_rl_diags():
     raw_grid = ["ab", "cd"]
     grid = grid_from_lines(raw_grid)
     assert grid.val_rl_diags() == [["d"], ["b", "c"], ["a"]]
+
+
+def test_grid_val():
+    raw_grid = ["ab", "cd"]
+    grid = grid_from_lines(raw_grid)
+    assert grid.val(Point(0, 1)) == "c"
+    assert grid.val(Point(2, 0)) == "OUT_OF_BOUNDS"
