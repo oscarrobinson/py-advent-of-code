@@ -32,3 +32,15 @@ def test_grid_val_cols():
     raw_grid = ["ab", "cd"]
     grid = grid_from_lines(raw_grid)
     assert grid.val_cols() == [["a", "c"], ["b", "d"]]
+
+
+def test_grid_val_lr_diags():
+    raw_grid = ["ab", "cd"]
+    grid = grid_from_lines(raw_grid)
+    assert grid.val_lr_diags() == [["c"], ["a", "d"], ["b"]]
+
+
+def test_grid_val_rl_diags():
+    raw_grid = ["ab", "cd"]
+    grid = grid_from_lines(raw_grid)
+    assert grid.val_rl_diags() == [["d"], ["b", "c"], ["a"]]
