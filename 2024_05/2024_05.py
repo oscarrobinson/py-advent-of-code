@@ -59,6 +59,33 @@ def solution_2024_05_A(filename: str) -> int:
 
 
 def solution_2024_05_B(filename: str) -> int:
+    constraints, updates = parse_input(filename)
+    before_constraints = defaultdict(set)
+    after_constraints = defaultdict(set)
+
+    for before, after in constraints:
+        before_constraints[before].add(after)
+        after_constraints[after].add(before)
+
+    invalids = []
+
+    for update in updates:
+        valid = True
+        for i in range(0, len(update)):
+            must_be_after = after_constraints[update[i]]
+            must_be_before = before_constraints[update[i]]
+            before = set(list_before(i, update))
+            after = set(list_after(i, update))
+            before_valid = len(must_be_after.intersection(after)) == 0
+            after_valid = len(must_be_before.intersection(before)) == 0
+            if not (before_valid and after_valid):
+                valid = False
+                break
+        if not valid:
+            invalids.append(update)
+
+    # TODO: Search for a valid solution with DFS
+
     return 0
 
 
@@ -71,7 +98,7 @@ def test_solution_2024_05_A():
 
 
 def test_solution_2024_05_B():
-    assert solution_2024_05_B("./2024_05/test_input.txt") == 0  # Replace with expected output for the test case
+    assert solution_2024_05_B("./2024_05/test_input.txt") == 123  # Replace with expected output for the test case
 
 
 # def test_final_solution_2024_05_B():
