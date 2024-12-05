@@ -25,10 +25,6 @@ def list_before(i: int, list: list[int]) -> list[int]:
     return list[0:i]
 
 
-def list_after(i: int, list: list[int]) -> list[int]:
-    return list[i + 1 :]
-
-
 def is_valid(update: list[int], required_afters: dict[int, set[int]]) -> bool:
     valid = True
     for i in range(0, len(update)):
