@@ -29,97 +29,62 @@ def list_after(i: int, list: list[int]) -> list[int]:
     return list[i + 1 :]
 
 
-def solution_2024_05_A(filename: str) -> int:
-    constraints, updates = parse_input(filename)
-    before_constraints = defaultdict(set)
-    after_constraints = defaultdict(set)
+def is_valid(update: list[int], required_afters: dict[int, set[int]]) -> bool:
+    valid = True
+    for i in range(0, len(update)):
+        val_at_i = update[i]
+        if any([val in required_afters[val_at_i] for val in list_before(i, update)]):
+            valid = False
+            break
+    return valid
 
+
+def get_required_afters(constraints: list[(int, int)]) -> dict[int, set[int]]:
+    required_afters = defaultdict(set)
     for before, after in constraints:
-        before_constraints[before].add(after)
-        after_constraints[after].add(before)
+        required_afters[before].add(after)
+    return required_afters
 
+
+def solution_2024_05_A(filename: str) -> int:
+    raw_constraints, updates = parse_input(filename)
+    required_afters = get_required_afters(raw_constraints)
     result = 0
-
     for update in updates:
-        valid = True
-        for i in range(0, len(update)):
-            must_be_after = after_constraints[update[i]]
-            must_be_before = before_constraints[update[i]]
-            before = set(list_before(i, update))
-            after = set(list_after(i, update))
-            before_valid = len(must_be_after.intersection(after)) == 0
-            after_valid = len(must_be_before.intersection(before)) == 0
-            if not (before_valid and after_valid):
-                valid = False
-                break
-        if valid:
+        if is_valid(update, required_afters):
             result += get_middle(update)
-
     return result
 
 
 def solution_2024_05_B(filename: str) -> int:
-    constraints, updates = parse_input(filename)
-    before_constraints = defaultdict(set)
-    after_constraints = defaultdict(set)
-
-    for before, after in constraints:
-        before_constraints[before].add(after)
-        after_constraints[after].add(before)
+    raw_constraints, updates = parse_input(filename)
+    
+    required_afters = get_required_afters(raw_constraints)
 
     invalids = []
 
-    def is_valid(update: list[int]):
-        valid = True
-        for i in range(0, len(update)):
-            must_be_after = after_constraints[update[i]]
-            must_be_before = before_constraints[update[i]]
-            before = set(list_before(i, update))
-            after = set(list_after(i, update))
-            before_valid = len(must_be_after.intersection(after)) == 0
-            after_valid = len(must_be_before.intersection(before)) == 0
-            if not (before_valid and after_valid):
-                valid = False
-                break
-        return valid
-
     for update in updates:
-        if not is_valid(update):
+        if not is_valid(update, required_afters):
             invalids.append(update)
 
+    print(required_afters)
+
     result = 0
-    count = 1
 
     for invalid in invalids:
-        print(f"{count}/{len(invalids)}")
-        count += 1
-        queue = deque()
-        queue.append(([], list(invalid)))
-        valid = None
-        while queue and not valid:
-            update, to_place = queue.popleft()
-            if is_valid(update) and not to_place:
-                valid = update
-            elif to_place:
-                for i in range(0, len(to_place)):
-                    placing = to_place[i]
-                    new_to_place = to_place[0:i] + to_place[i + 1 :]
-                    for j in range(0, len(update) + 1):
-                        new_update = list(update)
-                        new_update.insert(j, placing)
-                        if is_valid(new_update):
-                            queue.append((new_update, new_to_place))
-        result += get_middle(valid)
+        print(invalid)
+        
 
-    return result
+
+    return 0
 
 
 def test_solution_2024_05_A():
     assert solution_2024_05_A("./2024_05/test_input.txt") == 143  # Replace with expected output for the test case
 
 
-# def test_final_solution_2024_05_A():
-#    assert solution_2024_05_A('./2024_05/input.txt') == 0 # Replace with solution when known
+def test_final_solution_2024_05_A():
+    assert solution_2024_05_A('./2024_05/input.txt') == 4281 # Replace with solution when known
 
 
 def test_solution_2024_05_B():
