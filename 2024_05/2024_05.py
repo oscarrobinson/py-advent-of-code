@@ -1,7 +1,7 @@
 import sys
 import math
 from common.utils import run
-from collections import defaultdict, deque
+from collections import defaultdict
 
 
 def get_middle(list: int) -> int:
@@ -58,7 +58,7 @@ def solution_2024_05_A(filename: str) -> int:
 
 def solution_2024_05_B(filename: str) -> int:
     raw_constraints, updates = parse_input(filename)
-    
+
     required_afters = get_required_afters(raw_constraints)
 
     invalids = []
@@ -67,16 +67,22 @@ def solution_2024_05_B(filename: str) -> int:
         if not is_valid(update, required_afters):
             invalids.append(update)
 
-    print(required_afters)
-
     result = 0
 
-    for invalid in invalids:
-        print(invalid)
-        
+    for update in invalids:
+        while not is_valid(update, required_afters):
+            for i in range(0, len(update)):
+                required_after_i = required_afters[update[i]]
+                # Swap value at i with value at j if value at j should be after i
+                for j in range(0, i):
+                    if update[j] in required_after_i:
+                        temp = update[i]
+                        update[i] = update[j]
+                        update[j] = temp
+                        break
+        result += get_middle(update)
 
-
-    return 0
+    return result
 
 
 def test_solution_2024_05_A():
@@ -84,15 +90,16 @@ def test_solution_2024_05_A():
 
 
 def test_final_solution_2024_05_A():
-    assert solution_2024_05_A('./2024_05/input.txt') == 4281 # Replace with solution when known
+    assert solution_2024_05_A("./2024_05/input.txt") == 4281  # Replace with solution when known
 
 
 def test_solution_2024_05_B():
     assert solution_2024_05_B("./2024_05/test_input.txt") == 123  # Replace with expected output for the test case
 
 
-# def test_final_solution_2024_05_B():
-#    assert solution_2024_05_B('./2024_05/input.txt') == 0 # Replace with solution when known
+def test_final_solution_2024_05_B():
+    assert solution_2024_05_B("./2024_05/input.txt") == 5466  # Replace with solution when known
+
 
 if __name__ == "__main__":
     run("2024_05", sys.argv[1], solution_2024_05_A, solution_2024_05_B)
