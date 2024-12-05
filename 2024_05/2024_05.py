@@ -1,7 +1,7 @@
 import sys
 import math
 from common.utils import run
-from collections import defaultdict
+from collections import defaultdict, deque
 
 
 def get_middle(list: int) -> int:
@@ -69,7 +69,7 @@ def solution_2024_05_B(filename: str) -> int:
 
     invalids = []
 
-    for update in updates:
+    def is_valid(update: list[int]):
         valid = True
         for i in range(0, len(update)):
             must_be_after = after_constraints[update[i]]
@@ -81,12 +81,37 @@ def solution_2024_05_B(filename: str) -> int:
             if not (before_valid and after_valid):
                 valid = False
                 break
-        if not valid:
+        return valid
+
+    for update in updates:
+        if not is_valid(update):
             invalids.append(update)
 
-    # TODO: Search for a valid solution with DFS
+    result = 0
+    count = 1
 
-    return 0
+    for invalid in invalids:
+        print(f"{count}/{len(invalids)}")
+        count += 1
+        queue = deque()
+        queue.append(([], list(invalid)))
+        valid = None
+        while queue and not valid:
+            update, to_place = queue.popleft()
+            if is_valid(update) and not to_place:
+                valid = update
+            elif to_place:
+                for i in range(0, len(to_place)):
+                    placing = to_place[i]
+                    new_to_place = to_place[0:i] + to_place[i + 1 :]
+                    for j in range(0, len(update) + 1):
+                        new_update = list(update)
+                        new_update.insert(j, placing)
+                        if is_valid(new_update):
+                            queue.append((new_update, new_to_place))
+        result += get_middle(valid)
+
+    return result
 
 
 def test_solution_2024_05_A():
