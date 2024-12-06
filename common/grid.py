@@ -34,6 +34,9 @@ class Grid:
     def height(self):
         return len(self.vals)
 
+    def set(self, point: Point, val: str):
+        self.vals[point.y][point.x] = val
+
     def val(self, point: Point) -> str:
         if point.x >= 0 and point.x < self.width() and point.y >= 0 and point.y < self.height():
             return self.vals[point.y][point.x]
