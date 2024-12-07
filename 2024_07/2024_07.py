@@ -11,7 +11,7 @@ def is_valid_eq(exp_result: int, nums: list[int]) -> bool:
         if len(rem_nums) == 0:
             if running_result == exp_result:
                 return True
-        else:
+        elif running_result <= exp_result:
             stack.append((running_result * rem_nums[0], rem_nums[1:]))
             stack.append((running_result + rem_nums[0], rem_nums[1:]))
     # Our DFS found no combo of operators that solved the equation
@@ -40,7 +40,7 @@ def is_valid_eq_b(exp_result: int, nums: list[int]) -> bool:
         if len(rem_nums) == 0:
             if running_result == exp_result:
                 return True
-        else:
+        elif running_result <= exp_result:
             stack.append((running_result * rem_nums[0], rem_nums[1:]))
             stack.append((running_result + rem_nums[0], rem_nums[1:]))
             # || concat operator
@@ -66,8 +66,8 @@ def test_solution_2024_07_A():
     assert solution_2024_07_A("./2024_07/test_input.txt") == 3749  # Replace with expected output for the test case
 
 
-# def test_final_solution_2024_07_A():
-#    assert solution_2024_07_A('./2024_07/input.txt') == 0 # Replace with solution when known
+def test_final_solution_2024_07_A():
+    assert solution_2024_07_A("./2024_07/input.txt") == 1289579105366  # Replace with solution when known
 
 
 def test_solution_2024_07_B():
