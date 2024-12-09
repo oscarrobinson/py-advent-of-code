@@ -4,28 +4,38 @@ from common.utils import run
 
 def solution_2024_09_A(filename: str) -> int:
     with open(filename) as lines:
-        disk_map = list(int(char) for char in "".join([line for line in lines]))
-        print(disk_map)
-    new_disk_map = []
+        compact_disk_map = list(int(char) for char in "".join([line for line in lines]))
+    disk_map = []
+    for n, length in enumerate(compact_disk_map):
+        is_file = n % 2 == 0
+        file_id = int(n / 2)
+        for i in range(0, length):
+            if is_file:
+                disk_map.append(file_id)
+            else:
+                disk_map.append(-1)
+
+    i_desc = len(disk_map) - 1
+    i_asc = 0
+
+    while i_asc < i_desc:
+        is_empty_block = disk_map[i_asc] == -1
+        if is_empty_block:
+            while disk_map[i_desc] == -1:
+                i_desc -= 1
+            if i_asc < i_desc:
+                tmp = disk_map[i_desc]
+                disk_map[i_desc] = disk_map[i_asc]
+                disk_map[i_asc] = tmp
+        i_asc += 1
+
     checksum = 0
-    for i, block_group_length in enumerate(disk_map):
-        is_file = (i % 2) == 0
-        if is_file:
-            file_id = i / 2
-            new_disk_map.append(block_group_length)
-            for n in range(0, block_group_length):
-                checksum += file_id * n
-        else:
-            pass
-            # empty of length block_group_length
-            # TODO: Store index and value of which file we're stealing blocks
-            # while taking_from_file is not empty and taking_from_file != current block we're looking at:
-            #    take block_group_length blocks from that file
-            #    append to new_disk_map
-            #    update checksum
-            #    if taking_from_file is empty:
-            #       get the next file
-    return 0
+    checksum_i = 0
+    while disk_map[checksum_i] != -1:
+        checksum += disk_map[checksum_i] * checksum_i
+        checksum_i += 1
+
+    return checksum
 
 
 def solution_2024_09_B(filename: str) -> int:
