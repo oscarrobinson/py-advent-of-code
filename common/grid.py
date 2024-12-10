@@ -37,6 +37,26 @@ class Grid:
     def set(self, point: Point, val: str):
         self.vals[point.y][point.x] = val
 
+    def get_neighbours(self, point: Point):
+        above, below, right, left = (None, None, None, None)
+        above_point = Point(point.x, point.y - 1)
+        above_val = self.val(above_point)
+        if above_val != "OUT_OF_BOUNDS":
+            above = Cell(above_point, above_val)
+        below_point = Point(point.x, point.y + 1)
+        below_val = self.val(below_point)
+        if below_val != "OUT_OF_BOUNDS":
+            below = Cell(below_point, below_val)
+        left_point = Point(point.x - 1, point.y)
+        left_val = self.val(left_point)
+        if left_val != "OUT_OF_BOUNDS":
+            left = Cell(left_point, left_val)
+        right_point = Point(point.x + 1, point.y)
+        right_val = self.val(right_point)
+        if right_val != "OUT_OF_BOUNDS":
+            right = Cell(right_point, right_val)
+        return [cell for cell in [above, below, left, right] if cell is not None]
+
     def val(self, point: Point) -> str:
         if point.x >= 0 and point.x < self.width() and point.y >= 0 and point.y < self.height():
             return self.vals[point.y][point.x]
