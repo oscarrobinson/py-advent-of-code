@@ -32,7 +32,31 @@ def solution_2024_10_A(filename: str) -> int:
 
 
 def solution_2024_10_B(filename: str) -> int:
-    return 0
+    with open(filename) as lines:
+        trail_map = grid_from_lines(list(lines))
+
+    trailheads = [cell for cell in trail_map if cell.val == "0"]
+
+    total_score = 0
+
+    for trailhead in trailheads:
+        # Just count rather than set as we want to count all distinct paths terminating in peak rather than all distinct peaks reachable
+        reachable_peaks = 0
+        stack = [trailhead]
+        while stack:
+            loc = stack.pop()
+            neighbours = trail_map.get_neighbours(loc.point)
+            loc_height = int(loc.val)
+            for neighbour in neighbours:
+                neighbour_height = int(neighbour.val)
+                if neighbour_height == 9 and loc_height == 9 - 1:
+                    reachable_peaks += 1
+                elif neighbour_height == loc_height + 1:
+                    stack.append(neighbour)
+
+        total_score += reachable_peaks
+
+    return total_score
 
 
 def test_solution_2024_10_A():
@@ -44,7 +68,7 @@ def test_solution_2024_10_A():
 
 
 def test_solution_2024_10_B():
-    assert solution_2024_10_B("./2024_10/test_input.txt") == 0  # Replace with expected output for the test case
+    assert solution_2024_10_B("./2024_10/test_input.txt") == 81  # Replace with expected output for the test case
 
 
 # def test_final_solution_2024_10_B():
