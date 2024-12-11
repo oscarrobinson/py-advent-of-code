@@ -1,53 +1,41 @@
 import sys
 from common.utils import run
-from functools import lru_cache
+from functools import cache
 
 
-@lru_cache(maxsize=1000000)
-def get_next_numbers(num_str: str) -> list[str]:
-    new_nums = []
-    if int(num_str) == 0:
-        new_nums.append("1")
-    elif len(num_str) % 2 == 0:
-        new_nums.append(str(int(num_str[0 : int(len(num_str) / 2)])))
-        new_nums.append(str(int(num_str[int(len(num_str) / 2) :])))
+@cache
+def get_num_stones(stone: int, after_blinks: int):
+    if after_blinks == 0:
+        return 1
+    elif stone == 0:
+        return get_num_stones(1, after_blinks - 1)
+    elif len(str(stone)) % 2 == 0:
+        stone = str(stone)
+        halfway = int(len(stone) / 2)
+        half_num_1 = int(stone[0:halfway])
+        half_num_2 = int(stone[halfway:])
+        return get_num_stones(half_num_1, after_blinks - 1) + get_num_stones(half_num_2, after_blinks - 1)
     else:
-        new_nums.append(str(int(num_str) * 2024))
-    return new_nums
+        return get_num_stones(stone * 2024, after_blinks - 1)
 
 
-def get_num_stones(filename: str, after_blinks: int) -> int:
+def solve(filename: str, after_blinks: int) -> int:
     with open(filename) as lines:
         line = list(lines)[0].strip().split()
 
-    for i in range(0, after_blinks):
-        print("\n--------\n")
-        print(get_next_numbers.cache_info())
-        print(i)
-        new_line = []
-        j = 0
-        length = len(line)
-        print(length)
-        for num_str in line:
-            j += 1
-            print(str(j) + "\r", end="")
-            for num in get_next_numbers(num_str):
-                new_line.append(num)
-        line = new_line
+    total = 0
+    for stone in line:
+        total += get_num_stones(int(stone), after_blinks)
 
-    return len(line)
+    return total
 
 
 def solution_2024_11_A(filename: str) -> int:
-    return get_num_stones(filename, 25)
-
-
-# TODO: Cache grows very slowly, this means same numbers come up again and again
-# each application of the rules must form a cycle
+    return solve(filename, 25)
 
 
 def solution_2024_11_B(filename: str) -> int:
-    return get_num_stones(filename, 75)
+    return solve(filename, 75)
 
 
 def test_solution_2024_11_A():
