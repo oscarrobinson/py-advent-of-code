@@ -9,6 +9,9 @@ class Point:
     def __str__(self):
         return f"({self.x},{self.y})"
 
+    def __hash__(self):
+        return hash((self.x, self.y))
+
 
 def min_distance(a: Point, b: Point) -> int:
     return abs(a.x - b.x) + abs(a.y - b.y)
