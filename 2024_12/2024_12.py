@@ -57,12 +57,11 @@ def solution_2024_12_B(filename: str) -> int:
                         if neighbour.val == plant and neighbour.point not in visited:
                             stack.append(neighbour.point)
             regions.append(region)
-    
+
     for region in regions:
         # Sort by x coord then y coord order so are walking points by column in order
         column_order = sorted(region, key=lambda p: (p.x, p.y))
         prev_point = None
-        prev_prev_point = None
         on_side = False
         sides = 0
         # Check the left side of every point
@@ -80,18 +79,13 @@ def solution_2024_12_B(filename: str) -> int:
                 if farm.val(point) != farm.val(Point(point.x-1, point.y)):
                     on_side = True
 
-            prev_prev_point = prev_point
             prev_point = point
         
         # Check if our final point counts as a side
         if on_side:
-            # no longer on same side if point to direct right is in same region we haven't taken a contiguous step down
-            if farm.val(prev_point) == farm.val(Point(prev_point.x-1, prev_point.y)) or not prev_prev_point or prev_point.y != prev_prev_point.y+1:
-                on_side = False
-                sides += 1
+            sides += 1
 
         prev_point = None
-        prev_prev_point = None
         on_side = False
 
         # Check the right side of every point
@@ -109,29 +103,21 @@ def solution_2024_12_B(filename: str) -> int:
                 if farm.val(point) != farm.val(Point(point.x+1, point.y)):
                     on_side = True
 
-            prev_prev_point = prev_point
             prev_point = point
 
         # Check if our final point counts as a side
         if on_side:
-            # no longer on same side if point to direct right is in same region we haven't taken a contiguous step down
-            if farm.val(prev_point) == farm.val(Point(prev_point.x+1, prev_point.y)) or not prev_prev_point or prev_point.y != prev_prev_point.y+1:
-                on_side = False
-                sides += 1
-
+            sides += 1
 
         prev_point = None
-        prev_prev_point = None
         on_side = False
 
         # Sort by y coord then x coord order so are walking points by row in order
         row_order = sorted(region, key=lambda p: (p.y, p.x))
         prev_point = None
-        prev_prev_point = None
         on_side = False
         # Check the top side of every point
         for point in row_order:
-            print(point)
 
             # If already on a side, check if we're still on the same side
             if on_side:
@@ -146,18 +132,13 @@ def solution_2024_12_B(filename: str) -> int:
                 if farm.val(point) != farm.val(Point(point.x, point.y-1)):
                     on_side = True
 
-            prev_prev_point = prev_point
             prev_point = point
         
         # Check if our final point counts as a side
         if on_side:
-            # no longer on same side if point direct above is in same region we haven't taken a contiguous step right
-            if farm.val(prev_point) == farm.val(Point(prev_point.x, prev_point.y-1)) or not prev_prev_point or prev_point.x != prev_prev_point.x+1:
-                on_side = False
-                sides += 1
+            sides += 1
 
         prev_point = None
-        prev_prev_point = None
         on_side = False
 
         # Check the below side of every point
@@ -175,20 +156,14 @@ def solution_2024_12_B(filename: str) -> int:
                 if farm.val(point) != farm.val(Point(point.x, point.y+1)):
                     on_side = True
 
-            prev_prev_point = prev_point
             prev_point = point
 
         # Check if our final point counts as a side
         if on_side:
-            # no longer on same side if point to direct below is in same region we haven't taken a contiguous step down
-            if farm.val(prev_point) == farm.val(Point(prev_point.x, prev_point.y+1)) or not prev_prev_point or prev_point.x != prev_prev_point.x+1:
-                on_side = False
-                sides += 1
+            sides += 1
 
-        print("\n")
-        print(sides)
-        print("--------")
-    return 0
+        total_fence_cost += len(region) * sides
+    return total_fence_cost
 
 
 def test_solution_2024_12_A():
