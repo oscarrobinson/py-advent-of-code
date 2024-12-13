@@ -69,18 +69,18 @@ def solution_2024_12_B(filename: str) -> int:
             # If already on a side, check if we're still on the same side
             if on_side:
                 # no longer on same side if point to direct left is in same region we haven't taken a contiguous step down
-                if farm.val(point) == farm.val(Point(point.x-1, point.y)) or point.y != prev_point.y+1:
+                if farm.val(point) == farm.val(Point(point.x - 1, point.y)) or point.y != prev_point.y + 1:
                     on_side = False
                     sides += 1
 
             # If not already on a side/no longer on a side, check if we're on a new side
             if not on_side:
-                # on a side if point to the direct left is out of bounds or a different plant
-                if farm.val(point) != farm.val(Point(point.x-1, point.y)):
+                # on a side if point to the direct left is out of bounds or a different plant
+                if farm.val(point) != farm.val(Point(point.x - 1, point.y)):
                     on_side = True
 
             prev_point = point
-        
+
         # Check if our final point counts as a side
         if on_side:
             sides += 1
@@ -93,14 +93,14 @@ def solution_2024_12_B(filename: str) -> int:
             # If already on a side, check if we're still on the same side
             if on_side:
                 # no longer on same side if point to direct right is in same region we haven't taken a contiguous step down
-                if farm.val(point) == farm.val(Point(point.x+1, point.y)) or point.y != prev_point.y+1:
+                if farm.val(point) == farm.val(Point(point.x + 1, point.y)) or point.y != prev_point.y + 1:
                     on_side = False
                     sides += 1
 
             # If not already on a side/no longer on a side, check if we're on a new side
             if not on_side:
-                # on a side if point to the direct right is out of bounds or a different plant
-                if farm.val(point) != farm.val(Point(point.x+1, point.y)):
+                # on a side if point to the direct right is out of bounds or a different plant
+                if farm.val(point) != farm.val(Point(point.x + 1, point.y)):
                     on_side = True
 
             prev_point = point
@@ -118,22 +118,21 @@ def solution_2024_12_B(filename: str) -> int:
         on_side = False
         # Check the top side of every point
         for point in row_order:
-
             # If already on a side, check if we're still on the same side
             if on_side:
                 # no longer on same side if point to direct above is in same region we haven't taken a contiguous step right
-                if farm.val(point) == farm.val(Point(point.x, point.y-1)) or point.x != prev_point.x+1:
+                if farm.val(point) == farm.val(Point(point.x, point.y - 1)) or point.x != prev_point.x + 1:
                     on_side = False
                     sides += 1
 
             # If not already on a side/no longer on a side, check if we're on a new side
             if not on_side:
-                # on a side if point to the direct above is out of bounds or a different plant
-                if farm.val(point) != farm.val(Point(point.x, point.y-1)):
+                # on a side if point to the direct above is out of bounds or a different plant
+                if farm.val(point) != farm.val(Point(point.x, point.y - 1)):
                     on_side = True
 
             prev_point = point
-        
+
         # Check if our final point counts as a side
         if on_side:
             sides += 1
@@ -146,14 +145,14 @@ def solution_2024_12_B(filename: str) -> int:
             # If already on a side, check if we're still on the same side
             if on_side:
                 # no longer on same side if point to direct right is in same region we haven't taken a contiguous step right
-                if farm.val(point) == farm.val(Point(point.x, point.y+1)) or point.x != prev_point.x+1:
+                if farm.val(point) == farm.val(Point(point.x, point.y + 1)) or point.x != prev_point.x + 1:
                     on_side = False
                     sides += 1
 
             # If not already on a side/no longer on a side, check if we're on a new side
             if not on_side:
-                # on a side if point direct below is out of bounds or a different plant
-                if farm.val(point) != farm.val(Point(point.x, point.y+1)):
+                # on a side if point direct below is out of bounds or a different plant
+                if farm.val(point) != farm.val(Point(point.x, point.y + 1)):
                     on_side = True
 
             prev_point = point
