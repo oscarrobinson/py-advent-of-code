@@ -60,6 +60,12 @@ class Grid:
             right = Cell(right_point, right_val)
         return [cell for cell in [above, below, left, right] if cell is not None]
 
+    def set_val(self, point: Point, value: str):
+        if point.x >= 0 and point.x < self.width() and point.y >= 0 and point.y < self.height():
+            self.vals[point.y][point.x] = value
+        else:
+            raise f"Can't set value outside grid {point}"
+
     def val(self, point: Point) -> str:
         if point.x >= 0 and point.x < self.width() and point.y >= 0 and point.y < self.height():
             return self.vals[point.y][point.x]
