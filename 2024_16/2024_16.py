@@ -2,6 +2,7 @@ import sys
 import math
 from common.utils import run
 from common.grid import grid_from_lines, Cell, Point, Grid
+import heapq
 
 
 START = "S"
@@ -80,7 +81,6 @@ def shortest_distances(
     # Create a set sptSet (shortest path tree set) that keeps track of vertices included in the shortest path tree, i.e., whose minimum distance from the source is calculated and finalized. Initially, this set is empty.
     shortest_path_tree = set()
     all_nodes = set(graph.keys())
-    i = 0
     # Assign a distance value to all vertices in the input graph. Initialize all distance values as INFINITE . Assign the distance value as 0 for the source vertex so that it is picked first.
     distances: dict[(Point, str), int] = dict()
     for node in all_nodes:
@@ -89,18 +89,16 @@ def shortest_distances(
         else:
             distances[node] = math.inf
 
-    # min_dist_node = from_point_dir
-    # min_dist = 0
-    # nodes_not_in_spt = all_nodes
+    heap = [(distances[node], node) for node in all_nodes]
+    heapq.heapify(heap)
 
     # While sptSet doesn’t include all vertices
     while not shortest_path_tree.issuperset(all_nodes):
-        i += 1
-        print(i, end="\r")
         # Pick a vertex u that is not there in sptSet and has a minimum distance value.
+        _, min_dist_node = heapq.heappop(heap)
+        while min_dist_node in shortest_path_tree and heap:
+            _, min_dist_node = heapq.heappop(heap)
 
-        nodes_not_in_spt = [node for node in all_nodes if node not in shortest_path_tree]
-        min_dist_node = sorted(nodes_not_in_spt, key=lambda node: distances[node])[0]
         # Include u to sptSet .
         shortest_path_tree.add(min_dist_node)
         min_dist_to_node = distances[min_dist_node]
@@ -112,7 +110,7 @@ def shortest_distances(
             maybe_new_min_dist = min_dist_to_node + adj_node_distance
             if maybe_new_min_dist < existing_min_dist:
                 distances[adj_node] = maybe_new_min_dist
-    print("DONE")
+                heapq.heappush(heap, (maybe_new_min_dist, adj_node))
     return distances
 
 

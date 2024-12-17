@@ -12,6 +12,9 @@ class Point:
     def __hash__(self):
         return hash((self.x, self.y))
 
+    def __lt__(self, other):
+        return self.x < other.x
+
 
 def min_distance(a: Point, b: Point) -> int:
     return abs(a.x - b.x) + abs(a.y - b.y)
