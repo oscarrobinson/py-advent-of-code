@@ -77,19 +77,19 @@ def to_graph(maze: Grid) -> dict[(Point, str), dict[(Point, str), int]]:
 # Code implemented using overview from https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/?ref=lbp
 def shortest_distances(
     graph: dict[(Point, str), dict[(Point, str), int]], from_point_dir: (Point, str)
-) -> dict[(Point, str), int]:
+) -> dict[(Point, str), (int, list[(Point, str)])]:
     # Create a set sptSet (shortest path tree set) that keeps track of vertices included in the shortest path tree, i.e., whose minimum distance from the source is calculated and finalized. Initially, this set is empty.
     shortest_path_tree = set()
     all_nodes = set(graph.keys())
     # Assign a distance value to all vertices in the input graph. Initialize all distance values as INFINITE . Assign the distance value as 0 for the source vertex so that it is picked first.
-    distances: dict[(Point, str), int] = dict()
+    distances: dict[(Point, str), (int, (Point, str))] = dict()
     for node in all_nodes:
         if node == from_point_dir:
-            distances[node] = 0
+            distances[node] = (0, [])
         else:
-            distances[node] = math.inf
+            distances[node] = (math.inf, [])
 
-    heap = [(distances[node], node) for node in all_nodes]
+    heap = [(distances[node][0], node) for node in all_nodes]
     heapq.heapify(heap)
 
     # While sptSet doesn’t include all vertices
@@ -101,15 +101,15 @@ def shortest_distances(
 
         # Include u to sptSet .
         shortest_path_tree.add(min_dist_node)
-        min_dist_to_node = distances[min_dist_node]
+        min_dist_to_node, _ = distances[min_dist_node]
         # Then update the distance value of all adjacent vertices of u .
         # To update the distance values, iterate through all adjacent vertices.
         for adj_node, adj_node_distance in graph[min_dist_node].items():
             # For every adjacent vertex v, if the sum of the distance value of u (from source) and weight of edge u-v , is less than the distance value of v , then update the distance value of v .
-            existing_min_dist = distances[adj_node]
+            existing_min_dist, existing_parent_nodes = distances[adj_node]
             maybe_new_min_dist = min_dist_to_node + adj_node_distance
-            if maybe_new_min_dist < existing_min_dist:
-                distances[adj_node] = maybe_new_min_dist
+            if maybe_new_min_dist <= existing_min_dist:
+                distances[adj_node] = (maybe_new_min_dist, existing_parent_nodes + [min_dist_node])
                 heapq.heappush(heap, (maybe_new_min_dist, adj_node))
     return distances
 
@@ -129,6 +129,30 @@ def solution_2024_16_A(filename: str) -> int:
 
     return min(
         [
+            distances[(end_point, N)][0],
+            distances[(end_point, S)][0],
+            distances[(end_point, E)][0],
+            distances[(end_point, W)][0],
+        ]
+    )
+
+
+def solution_2024_16_B(filename: str) -> int:
+    with open(filename) as lines:
+        lines = list(lines)
+    maze = grid_from_lines(lines)
+
+    start_point = [cell.point for cell in maze if cell.val == START][0]
+    end_point = [cell.point for cell in maze if cell.val == END][0]
+    start_dir = E
+
+    graph = to_graph(maze)
+    distances = shortest_distances(graph, (start_point, start_dir))
+
+    nodes_on_shortest_paths = set([end_point, start_point])
+
+    shortest_distance, parents = min(
+        [
             distances[(end_point, N)],
             distances[(end_point, S)],
             distances[(end_point, E)],
@@ -136,9 +160,13 @@ def solution_2024_16_A(filename: str) -> int:
         ]
     )
 
+    while parents:
+        parent = parents.pop()
+        nodes_on_shortest_paths.add(parent[0])
+        _, next_parents = distances[parent]
+        parents = parents + next_parents
 
-def solution_2024_16_B(filename: str) -> int:
-    return 0
+    return len(nodes_on_shortest_paths)
 
 
 def test_solution_2024_16_A():
@@ -151,7 +179,8 @@ def test_solution_2024_16_A():
 
 
 def test_solution_2024_16_B():
-    assert solution_2024_16_B("./2024_16/test_input.txt") == 0  # Replace with expected output for the test case
+    assert solution_2024_16_B("./2024_16/test_input_2.txt") == 45
+    assert solution_2024_16_B("./2024_16/test_input.txt") == 64  # Replace with expected output for the test case
 
 
 # def test_final_solution_2024_16_B():
