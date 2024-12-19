@@ -16,6 +16,27 @@ class Point:
         return self.x < other.x
 
 
+def get_neighbours(point: Point, width: int, height: int) -> list[Point]:
+    above, below, right, left = (None, None, None, None)
+    if point.x > 0 and point.x < width and point.y >= 0 and point.y < height:
+        left = Point(point.x - 1, point.y)
+    if point.x >= 0 and point.x < (width - 1) and point.y >= 0 and point.y < height:
+        right = Point(point.x + 1, point.y)
+    if point.x >= 0 and point.x < width and point.y > 0 and point.y < height:
+        above = Point(point.x, point.y - 1)
+    if point.x >= 0 and point.x < width and point.y >= 0 and point.y < (height - 1):
+        below = Point(point.x, point.y + 1)
+    return [point for point in [left, right, above, below] if point is not None]
+
+
+def test_get_neighbours():
+    assert get_neighbours(Point(0, 0), 1, 1) == []
+    assert get_neighbours(Point(0, 0), 2, 2) == [Point(1, 0), Point(0, 1)]
+    assert get_neighbours(Point(1, 0), 2, 2) == [Point(0, 0), Point(1, 1)]
+    assert get_neighbours(Point(1, 1), 2, 2) == [Point(0, 1), Point(1, 0)]
+    assert get_neighbours(Point(0, 1), 2, 2) == [Point(1, 1), Point(0, 0)]
+
+
 def min_distance(a: Point, b: Point) -> int:
     return abs(a.x - b.x) + abs(a.y - b.y)
 
