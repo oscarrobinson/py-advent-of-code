@@ -75,8 +75,37 @@ def solution_2024_18_A(filename: str, grid_size: int = 70, bytes_fallen: int = 1
             closed_points.add((q_f, q))
 
 
-def solution_2024_18_B(filename: str) -> int:
-    return 0
+def is_path(drop_locations: list[Point], goal: Point) -> bool:
+    stack = [Point(0, 0)]
+    visited = set()
+
+    while stack:
+        loc = stack.pop()
+        if loc == goal:
+            return True
+        visited.add(loc)
+        neighbours = get_neighbours(loc, goal.x + 1, goal.y + 1)
+        for neighbour in neighbours:
+            if neighbour not in drop_locations and neighbour not in visited:
+                stack.append(neighbour)
+    return False
+
+
+#                                               start at 1024 cos we know there's a path still from part A
+def solution_2024_18_B(filename: str, grid_size: int = 70, start_at=1024) -> int:
+    all_drop_locations = []
+
+    with open(filename) as lines:
+        for line in lines:
+            x, y = [int(num.strip()) for num in line.split(",")]
+            all_drop_locations.append(Point(x, y))
+    # coudld make this binary search to speed it up a bit but I'm too lazy
+    for i in range(start_at, len(all_drop_locations)):
+        print(i)
+        if not is_path(all_drop_locations[0 : i + 1], Point(grid_size, grid_size)):
+            return f"{all_drop_locations[i].x},{all_drop_locations[i].y}"
+
+    return ""
 
 
 def test_solution_2024_18_A():
@@ -90,7 +119,9 @@ def test_solution_2024_18_A():
 
 
 def test_solution_2024_18_B():
-    assert solution_2024_18_B("./2024_18/test_input.txt") == 0  # Replace with expected output for the test case
+    assert (
+        solution_2024_18_B("./2024_18/test_input.txt", grid_size=6, start_at=0) == "6,1"
+    )  # Replace with expected output for the test case
 
 
 # def test_final_solution_2024_18_B():
