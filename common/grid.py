@@ -47,7 +47,7 @@ class Cell:
     val: str
 
     def __str__(self):
-        return self.val
+        return self.val[0:1]
 
 
 class Grid:
