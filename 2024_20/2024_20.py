@@ -1,6 +1,6 @@
 import sys
 from common.utils import run
-from common.grid import grid_from_lines
+from common.grid import grid_from_lines, min_distance
 
 START = "S"
 END = "E"
@@ -47,8 +47,46 @@ def solution_2024_20_A(filename: str, min_saving=100) -> int:
     return big_cheats_count
 
 
-def solution_2024_20_B(filename: str) -> int:
-    return 0
+def solution_2024_20_B(filename: str, min_saving=100) -> int:
+    with open(filename) as file:
+        lines = list(file)
+    track = grid_from_lines(lines)
+
+    start = [cell.point for cell in track if cell.val == START][0]
+
+    # fill each path cell with dist from start
+    visited = list()
+    visited_set = set()
+    stack = [start]
+
+    i = 0
+    while stack:
+        loc = stack.pop()
+        track.set_val(loc, str(i))
+        visited.append(loc)
+        visited_set.add(loc)
+        neighbours = track.get_neighbours(loc)
+        for neighbour in neighbours:
+            if neighbour.val != WALL and neighbour.point not in visited_set:
+                stack.append(neighbour.point)
+        i += 1
+
+    # visit each visited cell on the track and find all other points on the track that
+    # have a distance <= 20 and result in a saving >= min_saving
+    big_cheats_count = 0
+    max_cheat_dist = 20
+    i = 0
+    for loc in visited:
+        i += 1
+        print(f"{i}/{len(visited)}", end="\r")
+        for other_loc in visited:
+            dist = min_distance(loc, other_loc)
+            other_loc_val = int(track.val(other_loc))
+            loc_val = int(track.val(loc))
+            if (other_loc_val - loc_val - dist) >= min_saving and dist <= max_cheat_dist:
+                big_cheats_count += 1
+
+    return big_cheats_count
 
 
 def test_solution_2024_20_A():
@@ -62,7 +100,9 @@ def test_solution_2024_20_A():
 
 
 def test_solution_2024_20_B():
-    assert solution_2024_20_B("./2024_20/test_input.txt") == 0  # Replace with expected output for the test case
+    assert (
+        solution_2024_20_B("./2024_20/test_input.txt", min_saving=64) == 86
+    )  # Replace with expected output for the test case
 
 
 # def test_final_solution_2024_20_B():
