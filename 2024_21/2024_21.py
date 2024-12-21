@@ -44,43 +44,67 @@ def neighbours_with_direction(buttons: Grid, point: Point) -> list[(str, Point)]
 
 
 @cache
-def get_shortest_press_seq_between(source: str, target: str, buttons: Grid) -> list[str]:
+def get_shortest_press_seqs_between(source: str, target: str, buttons: Grid) -> list[list[str]]:
     source_pos = buttons.find_point_with_val(source)
     queue = deque()
     visited = set()
+    shortest_path_len = None
     queue.append((source_pos, []))
+    results = []
     while queue:
         loc, press_seq = queue.popleft()
         visited.add(loc)
         if buttons.val(loc) == target:
-            return press_seq + ["A"]
+            final_path = press_seq + ["A"]
+            if not shortest_path_len:
+                shortest_path_len = len(final_path)
+            if len(final_path) == shortest_path_len:
+                results.append(final_path)
         for direction, neighbour in neighbours_with_direction(buttons, loc):
             if neighbour not in visited:
                 queue.append((neighbour, press_seq + [direction]))
+    return results
 
 
-def get_shortest_press_seq(target_seq: str, buttons: Grid) -> str:
-    cur_point = "A"
-    press_seq = []
-    for target_point in target_seq:
-        add_seq = get_shortest_press_seq_between(cur_point, target_point, buttons)
-        press_seq = press_seq + add_seq
-        cur_point = target_point
-    return "".join(press_seq)
+@cache
+def get_shortest_press_seqs(cur_button: str, rem_seq: str, buttons: Grid) -> list[str]:
+    if len(rem_seq) == 1:
+        return ["".join(seq) for seq in get_shortest_press_seqs_between(cur_button, rem_seq, buttons)]
+    else:
+        result = []
+        header_paths = get_shortest_press_seqs_between(cur_button, rem_seq[0], buttons)
+        # only bother including shortest header paths
+        len_shortest_header_path = min([len(path) for path in header_paths])
+        for header in header_paths:
+            if len(header) == len_shortest_header_path:
+                poss_subsequent_paths = get_shortest_press_seqs(rem_seq[0:1], rem_seq[1:], buttons)
+                for sub_path in poss_subsequent_paths:
+                    result.append("".join(header) + sub_path)
+        print(result)
+        return result
 
 
 def shortest_press_seq_length(numeric_seq: str) -> int:
-    robot_1_press_seq = get_shortest_press_seq(numeric_seq, numeric_grid)
+    robot_1_press_seqs = get_shortest_press_seqs("A", numeric_seq, numeric_grid)
+    robot_2_press_seqs = [
+        final_seq for seq in robot_1_press_seqs for final_seq in get_shortest_press_seqs("A", seq, directional_grid)
+    ]
+    robot_3_press_seqs = [
+        final_seq for seq in robot_2_press_seqs for final_seq in get_shortest_press_seqs("A", seq, directional_grid)
+    ]
+    my_press_seq_lens = [
+        len(final_seq)
+        for seq in robot_3_press_seqs
+        for final_seq in get_shortest_press_seqs("A", seq, directional_grid)
+    ]
+    return min(my_press_seq_lens)
 
-    robot_2_press_seq = get_shortest_press_seq(robot_1_press_seq, directional_grid)
 
-    robot_3_press_seq = get_shortest_press_seq(robot_2_press_seq, directional_grid)
-    print(numeric_seq)
-    print(robot_1_press_seq)
-    print(robot_2_press_seq)
-    print(robot_3_press_seq)
-    print("-----------")
-    return len(get_shortest_press_seq(robot_3_press_seq, directional_grid))
+# TODO:
+# current approach uses too much memory
+# Could Pre-compute shortest path on my keypad to move from every point
+# on numeric keypad to every other point on numeric keypad
+# then will be quick to get each result
 
 
 def solution_2024_21_A(filename: str) -> int:
