@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from collections import defaultdict
 
 
 @dataclass
@@ -54,6 +55,12 @@ class Grid:
     def __init__(self, vals: list[list[str]]):
         # copy so we don't end up with a ref to some other list
         self.vals = list([list(row) for row in vals])
+        self.val_points = defaultdict(list)
+        for y, row in enumerate(self.vals):
+            for x, val in enumerate(row):
+                val_list = self.val_points[val]
+                val_list.append(Point(x, y))
+                self.val_points[val] = val_list
 
     def width(self):
         return len(self.vals[0]) if len(self.vals) > 0 else 0
@@ -61,10 +68,16 @@ class Grid:
     def height(self):
         return len(self.vals)
 
+    def find_points_with_val(self, val: str) -> list[Point]:
+        return self.val_points[val]
+
+    def find_point_with_val(self, val: str) -> Point:
+        return self.find_points_with_val(val)[0]
+
     def set(self, point: Point, val: str):
         self.vals[point.y][point.x] = val
 
-    def get_neighbours(self, point: Point):
+    def get_all_neighbours(self, point: Point):
         above, below, right, left = (None, None, None, None)
         above_point = Point(point.x, point.y - 1)
         above_val = self.val(above_point)
@@ -82,7 +95,10 @@ class Grid:
         right_val = self.val(right_point)
         if right_val != "OUT_OF_BOUNDS":
             right = Cell(right_point, right_val)
-        return [cell for cell in [above, below, left, right] if cell is not None]
+        return [above, below, left, right]
+
+    def get_neighbours(self, point: Point):
+        return [cell for cell in self.get_all_neighbours(point) if cell is not None]
 
     def set_val(self, point: Point, value: str):
         if point.x >= 0 and point.x < self.width() and point.y >= 0 and point.y < self.height():
@@ -167,6 +183,9 @@ class Grid:
 
     def __str__(self):
         return "\n".join(["".join(row) for row in self.vals])
+
+    def __hash__(self):
+        return hash(self.__str__())
 
 
 def grid_from_lines(lines: list[str]) -> Grid:
