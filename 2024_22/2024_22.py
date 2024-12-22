@@ -1,29 +1,6 @@
 import sys
 from common.utils import run
-
-
-# Calculate the result of multiplying the secret number by 64.
-# Then, mix this result into the secret number. Finally, prune the secret number.
-#
-# Calculate the result of dividing the secret number by 32.
-# Round the result down to the nearest integer.
-# Then, mix this result into the secret number. Finally, prune the secret number.
-#
-# Calculate the result of multiplying the secret number by 2048.
-# Then, mix this result into the secret number. Finally, prune the secret number.
-# Each step of the above process involves mixing and pruning:
-#
-# To mix a value into the secret number,
-# calculate the bitwise XOR of the given value and the secret number.
-# Then, the secret number becomes the result of that operation.
-# (If the secret number is 42 and you were to mix 15 into the secret number,
-# the secret number would become 37.)
-#
-# To prune the secret number,
-# calculate the value of the secret number modulo 16777216.
-# Then, the secret number becomes the result of that operation.
-# (If the secret number is 100000000 and you were to prune the secret number,
-# the secret number would become 16113920.)
+from collections import defaultdict
 
 
 def get_nth_secret_number(initial: int, n: int) -> int:
@@ -41,6 +18,10 @@ def get_nth_secret_number(initial: int, n: int) -> int:
     return secret
 
 
+def secret_number_to_price(secret: int) -> int:
+    return secret % 10
+
+
 def solution_2024_22_A(filename: str) -> int:
     total = 0
     with open(filename) as lines:
@@ -51,7 +32,36 @@ def solution_2024_22_A(filename: str) -> int:
 
 
 def solution_2024_22_B(filename: str) -> int:
-    return 0
+    seq_totals = defaultdict(lambda: 0)
+
+    with open(filename) as lines:
+        for line in lines:
+            initial = int(line.strip())
+            price_sequence = []
+            last_price = secret_number_to_price(initial)
+            last_secret = initial
+            # Price you get first time each sequence appears
+            this_monkey_seq_prices = {}
+            for i in range(1, 2001):
+                cur_secret = get_nth_secret_number(last_secret, 1)
+                cur_price = secret_number_to_price(cur_secret)
+                diff = cur_price - last_price
+                price_sequence.append(diff)
+                # Trim the sequence once we get more than last 4 diffs
+                if len(price_sequence) == 5:
+                    price_sequence = price_sequence[1:5]
+                # Add current price to our total for each sequence type
+                if len(price_sequence) == 4:
+                    sequence = (price_sequence[0], price_sequence[1], price_sequence[2], price_sequence[3])
+                    if sequence not in this_monkey_seq_prices:
+                        this_monkey_seq_prices[sequence] = cur_price
+                last_price = cur_price
+                last_secret = cur_secret
+
+            for seq, price in this_monkey_seq_prices.items():
+                seq_totals[seq] += price
+
+    return max([price for price in seq_totals.values()])
 
 
 def test_solution_2024_22_A():
@@ -63,7 +73,7 @@ def test_solution_2024_22_A():
 
 
 def test_solution_2024_22_B():
-    assert solution_2024_22_B("./2024_22/test_input.txt") == 0  # Replace with expected output for the test case
+    assert solution_2024_22_B("./2024_22/test_input_2.txt") == 23  # Replace with expected output for the test case
 
 
 # def test_final_solution_2024_22_B():
